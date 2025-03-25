@@ -13,7 +13,7 @@ source "${ZINIT_HOME}/zinit.zsh"
 # PLUGINS
 
 # load completions
-autoload -U compinit && compinit
+autoload -Uz compinit && compinit -C -i
 
 # plugins
 zinit light Aloxaf/fzf-tab
@@ -85,6 +85,7 @@ t() {
 
 alias zi="zoxide edit"
 alias c="clear"
+alias a="aider"
 #alias o='code $(fzf)'
 alias op='code $(fzf -m --preview="bat --color=always {}")'
 alias fzf="fzf -m --preview="bat —-color=always {}
