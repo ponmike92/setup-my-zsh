@@ -21,12 +21,12 @@ preexec() {
 }
 
 precmd() {
-  if [ "$SKIP_LOGGING" != "1" ]; then
-    exec 1>&3 2>&4
-    exec 3>&- 4>&-
-    echo "===== END =====" >> "$LOGFILE"
-  fi
-  unset SKIP_LOGGING
+	if [ "$SKIP_LOGGING" != "1" ]; then
+		{ exec 1>&3 2>&4; } 2>/dev/null
+		{ exec 3>&- 4>&-; } 2>/dev/null
+		echo "===== END =====" >> "$LOGFILE"
+	fi
+	unset SKIP_LOGGING
 }
 
 # Copy last command and output
