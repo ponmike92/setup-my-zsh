@@ -8,7 +8,7 @@ ORIGINAL_STDERR=$(tty)
 # Логгируем
 preexec() {
   # Исключаем
-  if [[ "$1" =~ ^(c|yazi|aider) ]]; then
+  if [[ "$1" =~ ^(c|a|yazi|aider) ]]; then
     export SKIP_LOGGING=1
     return 0
   fi
