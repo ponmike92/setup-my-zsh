@@ -1,4 +1,4 @@
-LOGFILE="/Users/ponomi/.cache/last_sh_command.log"
+LOGFILE="$HOME/.cache/last_sh_command.log"
 touch "$LOGFILE"
 
 # Backup original stdout/stderr
@@ -7,7 +7,7 @@ ORIGINAL_STDERR=$(tty)
 
 # Log commands and capture output
 preexec() {
-  # Если команда начинается с ccc, yazi или aider, ставим флаг и пропускаем логирование
+  # Исключаем из логгирования
   if [[ "$1" =~ ^(c|yazi|aider) ]]; then
     export SKIP_LOGGING=1
     return 0
