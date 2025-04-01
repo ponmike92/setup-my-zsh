@@ -1,13 +1,13 @@
 LOGFILE="$HOME/.cache/last_sh_command.log"
 touch "$LOGFILE"
 
-# Backup original stdout/stderr
+# Сохраняем stdout/stderr
 ORIGINAL_STDOUT=$(tty)
 ORIGINAL_STDERR=$(tty)
 
-# Log commands and capture output
+# Логгируем
 preexec() {
-  # Исключаем из логгирования
+  # Исключаем
   if [[ "$1" =~ ^(c|yazi|aider) ]]; then
     export SKIP_LOGGING=1
     return 0
@@ -29,7 +29,7 @@ precmd() {
 	unset SKIP_LOGGING
 }
 
-# Copy last command and output
+# Копируем
 c() {
   awk '
     BEGIN { last_cmd=""; last_output=""; in_output=0 }
