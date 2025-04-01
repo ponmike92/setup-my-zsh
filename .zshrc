@@ -1,3 +1,52 @@
+LOGFILE="/Users/ponomi/.cache/last_sh_command.log"
+touch "$LOGFILE"
+
+# Backup original stdout/stderr
+ORIGINAL_STDOUT=$(tty)
+ORIGINAL_STDERR=$(tty)
+
+# Log commands and capture output
+preexec() {
+  # Если команда начинается с ccc, yazi или aider, ставим флаг и пропускаем логирование
+  if [[ "$1" =~ ^(c|yazi|aider) ]]; then
+    export SKIP_LOGGING=1
+    return 0
+  fi
+
+  export SKIP_LOGGING=0
+  echo "COMMAND: $1" >> "$LOGFILE"
+  exec 3>&1 4>&2
+  exec 1> >(tee -a "$LOGFILE" > "$ORIGINAL_STDOUT")
+  exec 2> >(tee -a "$LOGFILE" > "$ORIGINAL_STDERR")
+}
+
+precmd() {
+  if [ "$SKIP_LOGGING" != "1" ]; then
+    exec 1>&3 2>&4
+    exec 3>&- 4>&-
+    echo "===== END =====" >> "$LOGFILE"
+  fi
+  unset SKIP_LOGGING
+}
+
+# Copy last command and output
+c() {
+  awk '
+    BEGIN { last_cmd=""; last_output=""; in_output=0 }
+    /COMMAND:/ {
+      last_cmd=substr($0, index($0,":")+2);
+      in_output=1;
+      last_output="";
+      next;
+    }
+    in_output && /===== END =====/ { in_output=0; next }
+    in_output { last_output = last_output $0 "\n" }
+    END {
+      printf "%s\n%s", last_cmd, last_output
+    }
+  ' "$LOGFILE" | pbcopy
+}
+
 # PLUGIN MANAGER
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -84,9 +133,7 @@ t() {
 
 
 alias zi="zoxide edit"
-alias c="clear"
 alias a="aider"
-#alias o='code $(fzf)'
 alias op='code $(fzf -m --preview="bat --color=always {}")'
 alias fzf="fzf -m --preview="bat —-color=always {}
 alias fzf='nvim $(fzf -m --preview="bat —-color=always {}")'|
